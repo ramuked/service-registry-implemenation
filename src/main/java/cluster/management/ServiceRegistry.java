@@ -4,16 +4,14 @@ import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.security.Provider;
 
 public class ServiceRegistry implements Watcher {
     private static final String REGISTRY_ZNODE = "/service_registry";
     private final ZooKeeper zooKeeper;
     private String currentZnode = null;
-    public List<String> allServiceAddresses = null;
+    private volatile List<String> allServiceAddresses =  Collections.emptyList();;
     public ServiceRegistry(ZooKeeper zooKeeper){
         this.zooKeeper = zooKeeper;
         createServiceRegistryZnode();
@@ -31,14 +29,7 @@ public class ServiceRegistry implements Watcher {
             zooKeeper.delete(currentZnode,-1);
         }
     }
-    public synchronized List<String> getAllServiceAddresses(){
-        if(allServiceAddresses == null){
-            try {
-                updateAddresses();
-            } catch (InterruptedException | KeeperException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    public synchronized List<String> getAllServiceAddresses() {
         return allServiceAddresses;
     }
 
