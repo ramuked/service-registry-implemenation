@@ -47,6 +47,9 @@ public class LeaderElection implements Watcher {
                 int predecessorIndex = Collections.binarySearch(children, currentZnodeName) - 1;
                 predecessorZnodeName = children.get(predecessorIndex);
                 predecessorStat = zooKeeper.exists(ELECTION_NAMESPACE+"/"+predecessorZnodeName, this);
+                if (predecessorStat == null){
+                    predecessorZnodeName = null;
+                }
             }
         }
         onElectionCallback.onWorker();
